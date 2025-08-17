@@ -1,9 +1,11 @@
 from pathlib import Path
-from models.models import DatabaseSecret
+from models.models import DatabaseSecret, JwtSecret
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DB_SETTINGS = DatabaseSecret()
+JWT_SETTINGS = JwtSecret()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -26,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_simplejwt',
     'django_extensions',
     'rest_framework',
     'User'
@@ -63,16 +66,16 @@ WSGI_APPLICATION = 'AnLuckBackend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-db_settings = DatabaseSecret()
+
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': db_settings.DB,
-        'USER': db_settings.USER,
-        'PASSWORD': db_settings.PASSWORD,
-        'HOST': db_settings.HOST,
-        'PORT': db_settings.PORT
+        'NAME': DB_SETTINGS.DB,
+        'USER': DB_SETTINGS.USER,
+        'PASSWORD': DB_SETTINGS.PASSWORD,
+        'HOST': DB_SETTINGS.HOST,
+        'PORT': DB_SETTINGS.PORT
     }
 }
 
@@ -96,6 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -107,9 +111,25 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'User.User'
 
 STATIC_URL = 'static/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'User.auth.auth.CookieJWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=JWT_SETTINGS.ACCESS_MAX_AGE_HOURS), # В проде поменять на hours и поменять значение в .env
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=JWT_SETTINGS.REFRESH_MAX_AGE_DAYS), # В проде поменять значение в .env
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "SIGNING_KEY": JWT_SETTINGS.SECRET,
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
