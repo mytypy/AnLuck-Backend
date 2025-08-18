@@ -1,18 +1,42 @@
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .cookies import set_cookies
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.http import HttpRequest
+from rest_framework.viewsets import ViewSet
+from rest_framework.response import Response
+from .serializers import RegistrationSerializer
+from rest_framework.decorators import action
 
 
-class CookieJWTAuthentication(JWTAuthentication):
+class CookieTokenObtainPairView(TokenObtainPairView):
     
-    def authenticate(self, request):
-        header = self.get_header(request)
-        
-        if header is None:
-            raw_token = request.COOKIES.get('access_token') or None
-        else:
-            raw_token = self.get_raw_token(header)
-        if raw_token is None:
-            return None
-        
-        validated_token = self.get_validated_token(raw_token)
-        
-        return self.get_user(validated_token), validated_token
+    serializer_class = TokenObtainPairSerializer
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs) # Получаем объект Response
+
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            refresh_token = response.data.get('refresh')
+            
+            if access_token and refresh_token:
+                response = set_cookies(response, access_token, refresh_token) # Ставим http-only cookie в headers
+                del response.data['access']
+                del response.data['refresh']
+
+        return response
+
+
+class RegistrationViewSet(ViewSet):
+    serializer_class = RegistrationSerializer
+    
+    @action(
+        methods=['POST'],
+        detail=False
+    )
+    def registration(self, request: HttpRequest):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'response': 'Регистрация прошла успешно!'})

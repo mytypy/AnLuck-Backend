@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-moc#c-v&wp8oi#^df5i&1bxd&cpp*p4nj=%i@wcslxxol4+rg6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
+    'corsheaders',
     'django_extensions',
     'rest_framework',
     'User'
@@ -37,12 +38,18 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'AnLuckBackend.urls'
 
@@ -103,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'RU-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -116,15 +123,17 @@ AUTH_USER_MODEL = 'User.User'
 STATIC_URL = 'static/'
 
 
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'User.auth.auth.CookieJWTAuthentication',
+        'User.auth.authJWT.CookieJWTAuthentication',
     )
 }
 
 SIMPLE_JWT = {
+    'ROTATE_REFRESH_TOKENS': True,
     "ACCESS_TOKEN_LIFETIME": timedelta(days=JWT_SETTINGS.ACCESS_MAX_AGE_HOURS), # В проде поменять на hours и поменять значение в .env
     "REFRESH_TOKEN_LIFETIME": timedelta(days=JWT_SETTINGS.REFRESH_MAX_AGE_DAYS), # В проде поменять значение в .env
     "AUTH_HEADER_TYPES": ("Bearer",),

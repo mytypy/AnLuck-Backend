@@ -16,16 +16,19 @@ def set_cookies(response: HttpResponse, access, refresh):
         value=access,
         max_age=timedelta(days=jwt_secret.ACCESS_MAX_AGE_HOURS).total_seconds(), # Потом поменять на часы
         httponly=True,
-        samesite='Strict',
-        # secure=True Включить в проде
+        samesite='None',
+        secure=True
+        # domain=".anluck.ru", на проде, если они поддоменные api.anluck.ru и app.anluck.ru
+
     )
     response.set_cookie(
         'refresh_token',
         value=refresh,
         max_age=timedelta(days=jwt_secret.REFRESH_MAX_AGE_DAYS).total_seconds(),
         httponly=True,
-        samesite='Strict',
-        # secure=True Включить в проде
+        samesite='None',
+        secure=True
+        # domain=".anluck.ru", на проде, если они поддоменные api.anluck.ru и app.anluck.ru
     )
     
     return response

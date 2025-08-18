@@ -13,4 +13,4 @@ class UserViewSet(ViewSet):
         detail=False
     )
     def user(self, request: HttpRequest):
-        return Response({'response': request.user.me})
+        return Response({'user': request.user.me})
