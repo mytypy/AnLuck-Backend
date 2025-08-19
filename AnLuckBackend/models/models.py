@@ -8,4 +8,19 @@ class DatabaseSecret(BaseSettings):
     HOST: str
     PORT: int
     
-    model_config = SettingsConfigDict(env_prefix='POSTGRES_', env_file='.env')
+    model_config = SettingsConfigDict(
+        env_prefix='POSTGRES_',
+        env_file='.env',
+        extra='allow'
+    )
+
+class JwtSecret(BaseSettings):
+    SECRET: str
+    ACCESS_MAX_AGE_HOURS: int
+    REFRESH_MAX_AGE_DAYS: int
+    
+    model_config = SettingsConfigDict(
+        env_prefix='JWT_',
+        env_file='.env',
+        extra='allow'
+    )
