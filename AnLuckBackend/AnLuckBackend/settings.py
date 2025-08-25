@@ -33,7 +33,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'rest_framework',
-    'User'
+    'User',
+    'Comments',
+    'Notifications',
+    'Posts'
 ]
 
 MIDDLEWARE = [

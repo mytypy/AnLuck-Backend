@@ -21,4 +21,5 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return value
         
     def create(self, validated_data):
+        validated_data['tag'] = f'user_{User.objects.count() + 1}'
         return User.objects.create_user(**validated_data)
