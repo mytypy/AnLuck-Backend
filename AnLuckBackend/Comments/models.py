@@ -6,4 +6,4 @@ class Comment(models.Model):
     post = models.ForeignKey('Posts.Post', on_delete=models.CASCADE, related_name='commentary_post')
     text = models.TextField('Текст комментария', blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    parent = models.ForeignKey('Comments.Comment', on_delete=models.CASCADE, related_name='parent_comment')
+    parent = models.ForeignKey('Comments.Comment', on_delete=models.CASCADE, related_name='replies', null=True)

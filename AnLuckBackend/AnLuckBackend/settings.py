@@ -18,7 +18,9 @@ SECRET_KEY = 'django-insecure-moc#c-v&wp8oi#^df5i&1bxd&cpp*p4nj=%i@wcslxxol4+rg6
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+INTERNAL_IPS = [
+    "127.0.0.1",  # для локалки
+]
 
 # Application definition
 
@@ -33,6 +35,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'rest_framework',
+    'debug_toolbar',
     'User',
     'Comments',
     'Notifications',
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
