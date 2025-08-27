@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField()
     tag = serializers.CharField()
     bio = serializers.CharField()

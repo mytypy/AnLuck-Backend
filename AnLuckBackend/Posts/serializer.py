@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 from rest_framework import serializers
-from .models import Post
+from .models import Post, PostImage
 from Comments.serializers import CommentarySerializer
 from utils.utils import normal_time
         
@@ -37,13 +37,12 @@ class PostSerializer(serializers.ModelSerializer):
         return avatar_url
 
     def get_images(self, obj):
-        images = getattr(obj, 'post_image_prefetch', None) or obj.post_image.all()
-        
+        images = getattr(obj, 'post_image_prefetch', None)
+
         if not images:
             return None
-        
-        ordered = sorted(images, key=lambda i: (i.order or 0))
-        return [self.get_normal_url(i.file_url) for i in ordered]
+
+        return [self.get_normal_url(i.file_url) for i in images]
     
     def get_commentsList(self, obj):
         top_comments = getattr(obj, 'top_comments_prefetch', None)
@@ -54,3 +53,28 @@ class PostSerializer(serializers.ModelSerializer):
         serializer = CommentarySerializer(top_comments, many=True, context=self.context)
         
         return serializer.data
+        
+        
+class PostViewSerializer(serializers.ModelSerializer):
+    photos = serializers.ListField(
+        child=serializers.FileField(),
+        write_only=True,
+        required=False
+    )
+
+    class Meta:
+        model = Post
+        fields = ('text', 'photos')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        files = validated_data.pop('photos', [])
+
+        post = Post.objects.create(author=user, **validated_data)
+
+        PostImage.objects.bulk_create([
+            PostImage(post=post, file_url=f, order=i)
+            for i, f in enumerate(files, start=1)
+        ])
+
+        return post

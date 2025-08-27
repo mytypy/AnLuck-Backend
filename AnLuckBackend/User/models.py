@@ -36,6 +36,7 @@ class User(AbstractBaseUser):
     @property
     def me(self):
         return {
+            'id': self.pk,
             'name': f'{self.first_name} {self.last_name}',
             'tag': self.tag,
             'bio': self.bio,
