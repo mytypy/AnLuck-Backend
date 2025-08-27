@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
     'corsheaders',
+    'django_cleanup',
     'django_extensions',
     'rest_framework',
     'debug_toolbar',

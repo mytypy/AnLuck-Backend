@@ -37,7 +37,8 @@ class User(AbstractBaseUser):
     def me(self):
         return {
             'id': self.pk,
-            'name': f'{self.first_name} {self.last_name}',
+            'first_name': self.first_name,
+            'last_name': self.last_name,
             'tag': self.tag,
             'bio': self.bio,
             'location': self.location,
