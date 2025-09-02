@@ -25,8 +25,13 @@ class UserViewSet(ViewSet):
         detail=False
     )
     def update_user(self, request: HttpRequest):
-        serializer = self.update_serializer_class(instance=request.user, data=request.data, partial=True)
+        serializer = self.update_serializer_class(instance=request.user, data=request.data, context={'request': request}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
-        return Response({'response': serializer.validated_data})
+        
+        valid_data = serializer.data
+        
+        if valid_data.get('avatar'):
+            valid_data['avatar'] = request.build_absolute_uri(valid_data.get('avatar'))
+        
+        return Response({'response': valid_data})
