@@ -13,10 +13,12 @@ class PostSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     comments = serializers.IntegerField(source='comment_count', read_only=True)
     commentsList = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
     
     class Meta:
         model = Post
-        fields = ('id', 'time', 'author', 'text', 'likes', 'shares', 'avatar', 'images', 'comments', 'commentsList')
+        fields = ('id', 'time', 'author', 'text', 'shares', 'avatar', 'images', 'comments', 'commentsList', 'likes', 'is_liked')
 
     def get_normal_url(self, file_field):
         request: HttpRequest = self.context.get('request')
@@ -53,6 +55,12 @@ class PostSerializer(serializers.ModelSerializer):
         serializer = CommentarySerializer(top_comments, many=True, context=self.context)
         
         return serializer.data
+    
+    def get_likes(self, obj):
+        return obj.likes_count
+
+    def get_is_liked(self, obj):
+        return obj.is_liked
         
         
 class PostViewSerializer(serializers.ModelSerializer):

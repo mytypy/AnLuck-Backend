@@ -45,7 +45,8 @@ class User(AbstractBaseUser):
             'website': self.website,
             'joinDate': self.format_data(),
             'work': self.work,
-            'avatar': self.avatar
+            'avatar': self.avatar,
+            'posts': self.post.all().count()
         }
 
 

@@ -13,6 +13,7 @@ class UserSerializer(serializers.Serializer):
     joinDate = serializers.CharField()
     work = serializers.CharField()
     avatar = serializers.ImageField()
+    posts = serializers.IntegerField()
     
     def to_representation(self, instance):
         rep = super().to_representation(instance)

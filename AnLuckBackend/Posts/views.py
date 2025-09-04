@@ -1,11 +1,12 @@
 from django.http import HttpRequest
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, OuterRef, Q, Exists
 from rest_framework.viewsets import ViewSet, ReadOnlyModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from User.models import User
 from Comments.models import Comment
+from Likes.models import Like
 from .models import Post, PostImage
 from .serializer import PostSerializer, PostViewSerializer
 
@@ -18,8 +19,12 @@ class PostReadOnlyModelViewSet(ReadOnlyModelViewSet): # Если в таких �
         qs = (
             Post.objects
             .select_related('author')
-            .annotate(comment_count=Count('commentary_post', distinct=True))
+            .annotate(comment_count=Count('commentary_post', distinct=True),
+                      likes_count=Count('like_post', distinct=True),
+                      is_liked=Exists(Like.objects.filter(post=OuterRef('pk'), author=self.request.user))
+                    )
             .prefetch_related(
+                # Prefetch('like_post', queryset=Like.objects.all().select_related('author').prefetch_related('user_like')),
                 Prefetch('post_image', queryset=PostImage.objects.order_by('order'), to_attr='post_image_prefetch'),
                 Prefetch(
                     'commentary_post',
