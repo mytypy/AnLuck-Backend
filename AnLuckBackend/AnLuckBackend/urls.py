@@ -9,7 +9,8 @@ urlpatterns = [
     path('', include('User.urls')),
     path('', include('User.auth.urls')),
     path('', include('Posts.urls')),
-    path('', include('Likes.urls'))
+    path('', include('Likes.urls')),
+    path('', include('Comments.urls'))
 ]
 
 if settings.DEBUG:

@@ -33,3 +33,17 @@ class CommentarySerializer(serializers.ModelSerializer):
         replies_qs = getattr(obj, 'replies_prefetch', None) or obj.replies.all()
         serializer = CommentarySerializer(replies_qs, many=True, context=self.context)
         return serializer.data
+    
+
+class CommentarySetSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Comment
+        fields = ('post', 'text')
+        
+    def create(self, validated_data):
+        request = self.context['request']
+        
+        validated_data['author'] = request.user
+        
+        return Comment.objects.create(**validated_data)

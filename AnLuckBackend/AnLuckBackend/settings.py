@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'Notifications',
     'Posts',
     'Likes'
-]
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
