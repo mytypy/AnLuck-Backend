@@ -1,12 +1,14 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.http import HttpRequest
 from .serializer import LikeSerializer
 from .models import Like
 
 
 class LikeViewSet(ViewSet):
+    permission_classes = (IsAuthenticated, )
     serializer_class = LikeSerializer
     
     @action(

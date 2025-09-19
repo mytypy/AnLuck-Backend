@@ -47,3 +47,26 @@ class CommentarySetSerializer(serializers.ModelSerializer):
         validated_data['author'] = request.user
         
         return Comment.objects.create(**validated_data)
+    
+
+class CommentarySetReplySerializer(serializers.ModelSerializer):
+    parent = serializers.IntegerField(required=False)
+    
+    class Meta:
+        model = Comment
+        fields = ('post', 'text', 'parent')
+        
+    def validate_parent(self, value):
+        commentary = Comment.objects.filter(pk=value)
+        print(value)
+        if not commentary.exists():
+            raise serializers.ValidationError('Такого комментария не существует')
+        
+        return commentary.first()
+    
+    def create(self, validated_data):
+        request = self.context['request']
+        
+        validated_data['author'] = request.user
+
+        return Comment.objects.create(**validated_data)
